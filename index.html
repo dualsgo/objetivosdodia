@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Texto - Objetivos do Dia</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lilita+One&display=swap');
+
+        body {
+            font-family: 'Lilita One', cursive;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: url(./APRESENTACAO-TEMPLATE-RH-1.png) no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 10px;
+        }
+
+        .inputs,
+        .output {
+            margin: 0 auto;
+        }
+
+        h1,
+        h3 {
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .content {
+                flex-direction: row;
+            }
+
+            .inputs,
+            .output {
+                width: 50%;
+                padding: 20px;
+                box-sizing: border-box;
+            }
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input,
+        textarea,
+        button {
+            width: 100%;
+            margin: 10px 0;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        .copy-button {
+            margin-top: 10px;
+            background-color: #008CBA;
+        }
+
+        .copy-button:hover {
+            background-color: #007BB5;
+        }
+
+        input, textarea, button {
+    font-family: 'Lilita One', cursive;
+    width: 100%;
+    margin: 10px 0;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="inputs">
+                <h1>Gerador de Texto - Objetivos do Dia</h1>
+
+                <label for="day">Data (automática):</label>
+                <input type="text" id="day" disabled>
+
+                <label for="storeGoal">Meta da loja (R$):</label>
+                <input type="text" id="storeGoal" placeholder="Digite a meta total da loja (ex: 23000,00)">
+
+                <label for="onlineGoal">Meta de vendas com prateleira (R$):</label>
+                <input type="text" id="onlineGoal" placeholder="Digite a meta total (loja + prateleira, ex: 25000,00)">
+
+                <label for="tkm">TKM (R$):</label>
+                <input type="text" id="tkm" placeholder="Digite o TKM (ex: 150,50)">
+
+                <label for="pa">P.A.:</label>
+                <input type="text" id="pa" placeholder="Digite o P.A. (ex: 2,5)">
+
+                <label for="sellers">Quantidade de vendedores no dia:</label>
+                <input type="number" id="sellers" placeholder="Digite o número de vendedores">
+
+                <label for="altQuantity">Incluir item da vez? Baralho/Sacola/Pilhas/SLP:</label>
+                <input type="number" id="altQuantity" placeholder="Digite a quantidade (ex: 10)">
+
+                <button onclick="generateText()">Gerar Texto</button>
+            </div>
+
+            <div class="output">
+                <h3>Texto para WhatsApp:</h3>
+                <textarea id="result" rows="20" readonly></textarea>
+                <button class="copy-button" onclick="copyToClipboard()">Copiar Texto</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set the date automatically
+        document.getElementById('day').value = new Date().toLocaleDateString('pt-BR', {
+            weekday: 'long', day: '2-digit', month: '2-digit'
+        });
+
+        function parseCurrency(value) {
+            if (!value) return 0;
+            return parseFloat(value.replace(/[.,]/g, (m, i, s) => s.indexOf('.') < i ? '' : '.')) || 0;
+        }
+
+        function generateText() {
+                const day = document.getElementById('day').value;
+                const storeGoal = parseCurrency(document.getElementById('storeGoal').value);
+                const totalGoal = parseCurrency(document.getElementById('onlineGoal').value);
+                const tkm = parseCurrency(document.getElementById('tkm').value);
+                const pa = parseFloat(document.getElementById('pa').value.replace(',', '.')) || 0;
+                const sellers = parseInt(document.getElementById('sellers').value) || 1;
+                const altQuantity = parseInt(document.getElementById('altQuantity').value) || 0;
+
+                // Verificação e ajuste da meta total
+                if (totalGoal < storeGoal) {
+                    alert("A meta de vendas com prateleira não pode ser menor que a meta geral da loja. Ajustando automaticamente.");
+                    totalGoal = storeGoal;
+                }
+
+                // Calculate goals
+                const onlineGoal = totalGoal - storeGoal;
+                const individualGoal = (storeGoal / sellers).toFixed(2);
+                const individualOnlineGoal = (onlineGoal / sellers).toFixed(2);
+                const individualAltQuantity = altQuantity > 0 ? Math.round(altQuantity / sellers) : 0;
+
+                // Format text for WhatsApp
+                let result = `📅 *Objetivos do Dia (${day}):*
+
+` +
+                    `🎯 *Meta da Loja:* ${storeGoal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+` +
+                    `👤 *Meta Individual:* ${(parseFloat(individualGoal)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+
+` +
+                    `💻 *Meta Prateleira:* ${onlineGoal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+` +
+                    `🌐 *Meta Prateleira Individual:* ${(parseFloat(individualOnlineGoal)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+
+` +
+                    `💻 *TKM:* ${tkm.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+` +
+                    `📊 *P.A.:* ${pa.toFixed(1)}`;
+
+                if (altQuantity > 0) {
+                    result += `
+
+🎯 *Meta Item da Vez:* ${altQuantity} unidades
+👤 *Meta Item Individual:* ${individualAltQuantity} unidades por vendedor`;
+                }
+
+                // Set the result in the textarea
+                document.getElementById('result').value = result;
+            }
+
+
+        function copyToClipboard() {
+            const resultText = document.getElementById('result');
+            resultText.select();
+            resultText.setSelectionRange(0, 99999); // For mobile devices
+            navigator.clipboard.writeText(resultText.value).then(() => {
+                alert('Texto copiado para a área de transferência!');
+            }).catch(err => {
+                alert('Erro ao copiar o texto: ' + err);
+            });
+        }
+    </script>
+</body>
+
+</html>
