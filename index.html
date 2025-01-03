@@ -204,52 +204,59 @@
         }
 
         function generateText() {
-            const day = document.getElementById('day').value;
-            const storeGoal = parseCurrency(document.getElementById('storeGoal').value);
-            const totalGoal = parseCurrency(document.getElementById('onlineGoal').value);
-            const tkm = parseCurrency(document.getElementById('tkm').value);
-            const pa = parseFloat(document.getElementById('pa').value.replace(',', '.')) || 0;
-            const sellers = parseInt(document.getElementById('sellers').value) || 1;
+                const day = document.getElementById('day').value;
+                const storeGoal = parseCurrency(document.getElementById('storeGoal').value);
+                const totalGoal = parseCurrency(document.getElementById('onlineGoal').value);
+                const tkm = parseCurrency(document.getElementById('tkm').value);
+                const pa = parseFloat(document.getElementById('pa').value.replace(',', '.')) || 0;
+                const sellers = parseInt(document.getElementById('sellers').value) || 1;
 
-            const onlineGoal = totalGoal - storeGoal;
-            const individualGoal = (storeGoal / sellers).toFixed(2);
-            const individualOnlineGoal = (onlineGoal / sellers).toFixed(2);
+                const onlineGoal = totalGoal - storeGoal;
+                const individualGoal = (storeGoal / sellers).toFixed(2);
+                const individualOnlineGoal = (onlineGoal / sellers).toFixed(2);
 
-            let result = `📅 *Objetivos do Dia (${day}):*\n\n`;
-            result += `🎯 *Meta da Loja:* R$ ${storeGoal.toLocaleString('pt-BR')}\n`;
-            result += `👤 *Meta Individual:* R$ ${(parseFloat(individualGoal)).toLocaleString('pt-BR')}\n\n`;
-            result += `💻 *Meta Prateleira:* R$ ${onlineGoal.toLocaleString('pt-BR')}\n`;
-            result += `🌐 *Meta Prateleira Individual:* R$ ${(parseFloat(individualOnlineGoal)).toLocaleString('pt-BR')}\n\n`;
-            result += `💻 *TKM:* R$ ${tkm.toLocaleString('pt-BR')}\n📊 *P.A.:* ${pa.toFixed(1)}\n\n`;
+                // Cálculo da quantidade de cupons
+                const totalCoupons = tkm > 0 ? Math.ceil(storeGoal / tkm) : 0;
+                const individualCoupons = Math.ceil(totalCoupons / sellers);
 
-            const items = [];
-            document.querySelectorAll('.item-row input[type="checkbox"]').forEach(checkbox => {
-                if (checkbox.checked) {
-                    const itemLabel = checkbox.parentNode.textContent.trim();
-                    const quantityInput = checkbox.parentNode.nextElementSibling;
-                    const quantity = parseInt(quantityInput.value) || 0;
-                    if (quantity > 0) {
+                let result = `📅 *Objetivos do Dia (${day}):*\n\n`;
+                result += `🎯 *Meta da Loja:* R$ ${storeGoal.toLocaleString('pt-BR')}\n`;
+                result += `👤 *Meta Individual:* R$ ${(parseFloat(individualGoal)).toLocaleString('pt-BR')}\n\n`;
+                result += `💻 *Meta Prateleira:* R$ ${onlineGoal.toLocaleString('pt-BR')}\n`;
+                result += `🌐 *Meta Prateleira Individual:* R$ ${(parseFloat(individualOnlineGoal)).toLocaleString('pt-BR')}\n\n`;
+                result += `💻 *TKM:* R$ ${tkm.toLocaleString('pt-BR')}\n📊 *P.A.:* ${pa.toFixed(1)}\n\n`;
+                result += `🧾 *Cupons Totais (Estimados):* ${totalCoupons} cupons\n`;
+                result += `👤 *Cupons Individuais (Estimados):* ${individualCoupons} cupons por vendedor\n\n`;
+
+                const items = [];
+                document.querySelectorAll('.item-row input[type="checkbox"]').forEach(checkbox => {
+                    if (checkbox.checked) {
+                        const itemLabel = checkbox.parentNode.textContent.trim();
+                        const quantityInput = checkbox.parentNode.nextElementSibling;
+                        const quantity = parseInt(quantityInput.value) || 0;
+                        if (quantity > 0) {
+                            const individualQuantity = (quantity / sellers).toFixed(0);
+                            items.push(`🎯 *${itemLabel}:* ${quantity} unidades (👤 ${individualQuantity} por vendedor)`);
+                        }
+                    }
+                });
+
+                for (let i = 1; i <= 3; i++) {
+                    const otherText = document.getElementById(`otherText${i}`).value.trim();
+                    const quantity = parseInt(document.getElementById(`quantityOther${i}`).value) || 0;
+                    if (otherText && quantity > 0) {
                         const individualQuantity = (quantity / sellers).toFixed(0);
-                        items.push(`🎯 *${itemLabel}:* ${quantity} unidades (👤 ${individualQuantity} por vendedor)`);
+                        items.push(`🎯 *${otherText}:* ${quantity} unidades (👤 ${individualQuantity} por vendedor)`);
                     }
                 }
-            });
 
-            for (let i = 1; i <= 3; i++) {
-                const otherText = document.getElementById(`otherText${i}`).value.trim();
-                const quantity = parseInt(document.getElementById(`quantityOther${i}`).value) || 0;
-                if (otherText && quantity > 0) {
-                    const individualQuantity = (quantity / sellers).toFixed(0);
-                    items.push(`🎯 *${otherText}:* ${quantity} unidades (👤 ${individualQuantity} por vendedor)`);
+                if (items.length > 0) {
+                    result += items.join('\n');
                 }
+
+                document.getElementById('result').value = result;
             }
 
-            if (items.length > 0) {
-                result += items.join('\n');
-            }
-
-            document.getElementById('result').value = result;
-        }
 
         function copyToClipboard() {
             const resultText = document.getElementById('result');
