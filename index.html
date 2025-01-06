@@ -1,384 +1,295 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>Gerador de Texto - Objetivos do Dia</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Lilita+One&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerador de Texto - Objetivos do Dia</title>
+  <style>
+    /* Estilo global */
+    body {
+      font-family: 'Lilita One', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #FFD700; /* Fundo amarelo */
+    }
 
-        body {
-            font-family: 'Lilita One', cursive;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            background: url(./APRESENTACAO-TEMPLATE-RH-1.png) no-repeat center center fixed;
-            background-size: cover;
-        }
+    header {
+      text-align: center;
+      background-color: #FF6347;
+      color: white;
+      padding: 20px;
+      border-bottom: 5px solid #FF4500;
+    }
 
-        .container {
-            display: flex;
-            flex: 1;
-            flex-direction: column;
-            padding: 10px;
-            overflow: auto;
-        }
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
 
-        .content {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            padding: 10px;
-            box-sizing: border-box;
+    header p {
+      margin: 10px 0 0;
+      font-size: 1rem;
+    }
 
-        }
+    .container {
+      display: grid;
+      grid-template-columns: 25% 25% 50%;
+      gap: 20px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
 
-        .inputs,
-        .output {
-            margin: 0 auto;
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
+    /* Estilo dos grids */
+    .metricas, .itens-adicionais, .resultado {
+      background-color: #FFFACD;
+      padding: 20px;
+      border-radius: 15px;
+      border: 2px solid #FFD700;
+    }
 
-        }
+    .metricas-grid, .itens-grid {
+      display: grid;
+      gap: 15px;
+    }
 
-        h1,
-        h3 {
-            text-align: center;
+    .metricas-grid div, .itens-grid .item {
+      display: flex;
+      flex-direction: column;
+    }
 
-        }
+    .item {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 10px;
+    }
 
-        @media (min-width: 768px) {
-            .content {
-                flex-direction: row;
-                justify-content: space-between;
+    .item input[type="number"],
+    #outro-nome {
+      grid-column: 1 / 3;
+      margin-top: 10px;
+    }
 
-            }
+    label {
+      margin-bottom: 5px;
+    }
 
-            .inputs,
-            .output {
-                width: 50%;
-                padding: 20px;
-                box-sizing: border-box;
+    input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
 
-            }
-        }
+    input::placeholder {
+      font-size: 0.9em;
+    }
 
-        label {
-            font-weight: bold;
+    /* Botões */
+    .botoes {
+      text-align: center;
+      margin-top: 20px;
+    }
 
-        }
+    button {
+      margin: 10px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #FF6347;
+      color: white;
+      font-size: 1rem;
+    }
 
-        input,
-        textarea,
-        button {
-            font-family: 'Lilita One', cursive;
-            width: 100%;
-            margin: 10px 0;
-            padding: 8px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
+    button:hover {
+      background-color: #FF4500;
+    }
 
-        }
+    /* Resultado */
+    #resultado-detalhes {
+      margin-top: 20px;
+      background-color: #fff;
+      padding: 10px;
+      border-radius: 5px;
+      white-space: pre-line;
+      font-size: 1rem;
+    }
 
-        button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
+    #mensagem {
+      margin-top: 10px;
+      color: #FF4500;
+      text-align: center;
+      font-weight: bold;
+    }
 
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        textarea {
-            resize: none;
-        }
-
-        .copy-button {
-            margin-top: 10px;
-            background-color: #008CBA;
-        }
-
-        .copy-button:hover {
-            background-color: #007BB5;
-        }
-
-        .item-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-
-        .item-row {
-            display: flex;
-            align-items: center;
-            margin: 5px 0;
-        }
-
-        .item-row label {
-            margin-right: 10px;
-        }
-
-        .item-row input[type="number"] {
-            width: 60px;
-            margin-left: 10px;
-        }
-
-        .item-row input[type="number"]:disabled {
-            background-color: #f0f0f0;
-        }
-
-        .item-row input[type="text"] {
-            width: 100%;
-            margin-right: 10px;
-        }
-
-        .item-row input[type="text"]:disabled {
-            background-color: #f0f0f0;
-        }
-
-        .item-row input[type="checkbox"] {
-            margin-right: 10px;
-        }
-
-        .item-row input[type="checkbox"]:disabled {
-            cursor: not-allowed;
-        }
-
-        .item-row input[type="checkbox"]:checked+input[type="number"] {
-            background-color: #f0f0f0;
-        }
-
-        .item-row input[type="checkbox"]:checked+input[type="number"]:disabled {
-            background-color: #f0f0f0;
-        }
-
-        .item-row input[type="checkbox"]:checked+input[type="number"]:disabled {
-            background-color: #f0f0f0;
-        }
-
-
-        @media (max-width: 768px) {
-            .item-row {
-                flex-direction: column;
-            }
-
-            .item-row input[type="checkbox"] {
-                margin-right: 0;
-                margin-bottom: 5px;
-            }
-
-            .item-row input[type="number"] {
-                width: 100%;
-            }
-
-            .item-row input[type="text"] {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .item-row input[type="number"] {
-                width: 100%;
-            }
-
-            .item-row input[type="text"] {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 320px) {
-            .item-row input[type="number"] {
-                width: 100%;
-            }
-
-            .item-row input[type="text"] {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 280px) {
-            .item-row input[type="number"] {
-                width: 100%;
-            }
-
-            .item-row input[type="text"] {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 240px) {
-            .item-row input[type="number"] {
-                width: 100%;
-            }
-
-            .item-row input[type="text"] {
-                width: 100%;
-            }
-        }
-
-    </style>
+    /* Responsividade */
+    @media screen and (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+    }
+  </style>
 </head>
-
 <body>
-    <div class="container">
-        <div class="content">
-            <div class="inputs">
-                <h1>Gerador de Texto - Objetivos do Dia</h1>
-
-                <label for="day">Data (automática):</label>
-                <input type="text" id="day" disabled>
-
-                <label for="storeGoal">Meta da loja (R$):</label>
-                <input type="text" id="storeGoal" placeholder="Use ponto para separar os centavos (ex: 20000.50)">
-
-                <label for="onlineGoal">Meta com prateleira (R$):</label>
-                <input type="text" id="onlineGoal" placeholder="Use ponto para separar os centavos (ex: 22000.50)">
-
-                <label for="tkm">TKM (R$):</label>
-                <input type="text" id="tkm" placeholder="Use ponto para separar os centavos (ex: 150.50)">
-
-                <label for="pa">P.A.:</label>
-                <input type="text" id="pa" placeholder="Use ponto para separar os décimos (ex: 2.5)">
-
-                <label for="sellers">Quantidade de vendedores no dia:</label>
-                <input type="number" id="sellers" placeholder="Digite o número de vendedores">
-
-                <div class="item-section">
-                    <h3>Itens da Vez</h3>
-                    <div class="item-row">
-                        <label><input type="checkbox" id="itemDeck"> Baralho</label>
-                        <input type="number" id="quantityDeck" placeholder="Qtde" min="0" disabled>
-                    </div>
-                    <div class="item-row">
-                        <label><input type="checkbox" id="itemBag"> Sacola</label>
-                        <input type="number" id="quantityBag" placeholder="Qtde" min="0" disabled>
-                    </div>
-                    <div class="item-row">
-                        <label><input type="checkbox" id="itemBattery"> Pilhas</label>
-                        <input type="number" id="quantityBattery" placeholder="Qtde" min="0" disabled>
-                    </div>
-                    <div class="item-row">
-                        <label><input type="checkbox" id="itemSLP"> SLP</label>
-                        <input type="number" id="quantitySLP" placeholder="Qtde" min="0" disabled>
-                    </div>
-                    <h4>Outros Itens</h4>
-                    <div class="item-row">
-                        <input type="text" id="otherText1" placeholder="Item 1">
-                        <input type="number" id="quantityOther1" placeholder="Qtde" min="0">
-                    </div>
-                    <div class="item-row">
-                        <input type="text" id="otherText2" placeholder="Item 2">
-                        <input type="number" id="quantityOther2" placeholder="Qtde" min="0">
-                    </div>
-                    <div class="item-row">
-                        <input type="text" id="otherText3" placeholder="Item 3">
-                        <input type="number" id="quantityOther3" placeholder="Qtde" min="0">
-                    </div>
-                </div>
-
-                <button onclick="generateText()">Gerar Texto</button>
-            </div>
-
-            <div class="output">
-                <h3>Texto para WhatsApp:</h3>
-                <textarea id="result" rows="20" readonly></textarea>
-                <button class="copy-button" onclick="copyToClipboard()">Copiar Texto</button>
-            </div>
+  <header>
+    <h1>🎯 Gerador de Texto - Objetivos do Dia 🎯</h1>
+    <p>📊 Meta e meta prateleira dizem respeito aos dados do painel de metas. O sistema fará o cálculo.</p>
+  </header>
+  <div class="container">
+    <!-- Métricas -->
+    <div class="metricas">
+      <h2>📈 Métricas</h2>
+      <div class="metricas-grid">
+        <div>
+          <label for="data">📅 Data</label>
+          <input type="text" id="data" readonly />
         </div>
+        <div>
+          <label for="vendedores">👥 Vendedores</label>
+          <input type="number" id="vendedores" placeholder="Quantidade de vendedores" />
+        </div>
+        <div>
+          <label for="meta">💰 Meta</label>
+          <input type="text" id="meta" placeholder="Ex.: 15.299,00" />
+        </div>
+        <div>
+          <label for="meta-prateleira">🛒 Meta com Prateleira</label>
+          <input type="text" id="meta-prateleira" placeholder="Ex.: 15.449,00" />
+        </div>
+        <div>
+          <label for="tkm">💻 TKM</label>
+          <input type="text" id="tkm" placeholder="Ex.: 140,00" />
+        </div>
+        <div>
+          <label for="pa">📊 P.A.</label>
+          <input type="text" id="pa" placeholder="Ex.: 1,65" />
+        </div>
+      </div>
     </div>
+    <!-- Itens Adicionais -->
+    <div class="itens-adicionais">
+      <h2>📦 Itens Adicionais</h2>
+      <div class="itens-grid">
+        <div class="item">
+          <input type="checkbox" id="baralho-check" />
+          <label for="baralho-check">Baralho</label>
+          <input type="number" placeholder="Quantidade" disabled />
+        </div>
+        <div class="item">
+          <input type="checkbox" id="sacola-check" />
+          <label for="sacola-check">Sacola</label>
+          <input type="number" placeholder="Quantidade" disabled />
+        </div>
+        <div class="item">
+          <input type="checkbox" id="slp-check" />
+          <label for="slp-check">SLP</label>
+          <input type="number" placeholder="Quantidade" disabled />
+        </div>
+        <div class="item">
+          <input type="checkbox" id="outro-check" />
+          <label for="outro-check">Outro</label>
+          <input type="text" id="outro-nome" placeholder="Nome do item" disabled />
+          <input type="number" placeholder="Quantidade" disabled />
+        </div>
+      </div>
+    </div>
+    <!-- Resultado -->
+    <div class="resultado">
+      <h2>📜 Resultado</h2>
+      <div class="botoes">
+        <button id="gerar-texto">Gerar Texto</button>
+        <button id="copiar-texto">Copiar Texto</button>
+      </div>
+      <div id="mensagem"></div>
+      <div id="resultado-detalhes"></div>
+    </div>
+  </div>
+  <script>
+    const parseValor = (valor) => parseFloat(valor.replace(/\./g, '').replace(',', '.')) || 0;
 
-    <script>
-        document.getElementById('day').value = new Date().toLocaleDateString('pt-BR', {
-            weekday: 'long', day: '2-digit', month: '2-digit'
-        });
+    document.getElementById('data').value = new Date().toLocaleDateString('pt-BR', {
+      weekday: 'long',
+      day: '2-digit',
+      month: '2-digit',
+    });
 
-        document.querySelectorAll('.item-row input[type="checkbox"]').forEach(checkbox => {
-            checkbox.addEventListener('change', function () {
-                const quantityInput = this.parentNode.nextElementSibling;
-                quantityInput.disabled = !this.checked;
-            });
-        });
+    document.querySelectorAll('.item input[type="checkbox"]').forEach((checkbox) => {
+      checkbox.addEventListener('change', () => {
+        const inputs = checkbox.parentElement.querySelectorAll('input[type="number"], input[type="text"]');
+        inputs.forEach((input) => (input.disabled = !checkbox.checked));
+      });
+    });
 
-        function parseCurrency(value) {
-            if (!value) return 0;
-            return parseFloat(value.replace(/[.,]/g, (m, i, s) => s.indexOf('.') < i ? '' : '.')) || 0;
+    document.getElementById('gerar-texto').addEventListener('click', () => {
+      const vendedores = parseInt(document.getElementById('vendedores').value) || 1;
+      const meta = parseValor(document.getElementById('meta').value);
+      const metaPrateleira = parseValor(document.getElementById('meta-prateleira').value);
+      const tkm = parseValor(document.getElementById('tkm').value);
+      const pa = parseValor(document.getElementById('pa').value);
+
+      // Verificações
+      const mensagem = document.getElementById('mensagem');
+      mensagem.textContent = '';
+
+      if (pa > 5 || pa < 1) {
+        mensagem.textContent = '⚠️ P.A. deve estar entre 1 e 5. Use vírgula como separador decimal!';
+        return;
+      }
+
+      if (metaPrateleira < meta) {
+        mensagem.textContent = '⚠️ Meta com prateleira não pode ser menor que a meta da loja. Verifique os valores!';
+        return;
+      }
+
+      // Cálculos
+      const metaPrateleiraDif = metaPrateleira - meta;
+      const metaIndividual = Math.round(meta / vendedores);
+      const metaPrateleiraIndividual = Math.round(metaPrateleiraDif / vendedores);
+      const cuponsTotais = tkm > 0 ? Math.round(meta / tkm) : 0;
+      const cuponsIndividuais = Math.round(cuponsTotais / vendedores);
+
+      // Itens adicionais
+      const adicionais = [];
+      document.querySelectorAll('.item input[type="checkbox"]').forEach((checkbox) => {
+        if (checkbox.checked) {
+          const nome = checkbox.id === 'outro-check' ? document.getElementById('outro-nome').value : checkbox.nextElementSibling.textContent;
+          const quantidade = parseInt(checkbox.parentElement.querySelector('input[type="number"]').value) || 0;
+          const quantidadePorVendedor = Math.round(quantidade / vendedores);
+          adicionais.push(`📦 *${nome}:* ${quantidade} (${quantidadePorVendedor} por vendedor)`);
         }
+      });
 
-        function generateText() {
-                const day = document.getElementById('day').value;
-                const storeGoal = parseCurrency(document.getElementById('storeGoal').value);
-                const totalGoal = parseCurrency(document.getElementById('onlineGoal').value);
-                const tkm = parseCurrency(document.getElementById('tkm').value);
-                const pa = parseFloat(document.getElementById('pa').value.replace(',', '.')) || 0;
-                const sellers = parseInt(document.getElementById('sellers').value) || 1;
+      // Texto gerado
+      let texto = `
+📅 *Objetivos do Dia (${document.getElementById('data').value}):*
 
-                const onlineGoal = totalGoal - storeGoal;
-                const individualGoal = (storeGoal / sellers).toFixed(2);
-                const individualOnlineGoal = (onlineGoal / sellers).toFixed(2);
+🎯 *Meta da Loja:* R$ ${meta.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+👤 *Meta Individual:* R$ ${metaIndividual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
 
-                // Cálculo da quantidade de cupons
-                const totalCoupons = tkm > 0 ? Math.ceil(storeGoal / tkm) : 0;
-                const individualCoupons = Math.ceil(totalCoupons / sellers);
+🛒 *Meta Prateleira:* R$ ${metaPrateleiraDif.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+🌐 *Meta Prateleira Individual:* R$ ${metaPrateleiraIndividual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
 
-                let result = `📅 *Objetivos do Dia (${day}):*\n\n`;
-                result += `🎯 *Meta da Loja:* R$ ${storeGoal.toLocaleString('pt-BR')}\n`;
-                result += `👤 *Meta Individual:* R$ ${(parseFloat(individualGoal)).toLocaleString('pt-BR')}\n\n`;
-                result += `💻 *Meta Prateleira:* R$ ${onlineGoal.toLocaleString('pt-BR')}\n`;
-                result += `🌐 *Meta Prateleira Individual:* R$ ${(parseFloat(individualOnlineGoal)).toLocaleString('pt-BR')}\n\n`;
-                result += `💻 *TKM:* R$ ${tkm.toLocaleString('pt-BR')}\n📊 *P.A.:* ${pa.toFixed(1)}\n\n`;
-                result += `🧾 *Cupons Totais (Estimados):* ${totalCoupons} cupons\n`;
-                result += `👤 *Cupons Individuais (Estimados):* ${individualCoupons} cupons por vendedor\n\n`;
+💻 *TKM:* R$ ${tkm.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+📊 *P.A.:* ${pa.toFixed(2)}
 
-                const items = [];
-                document.querySelectorAll('.item-row input[type="checkbox"]').forEach(checkbox => {
-                    if (checkbox.checked) {
-                        const itemLabel = checkbox.parentNode.textContent.trim();
-                        const quantityInput = checkbox.parentNode.nextElementSibling;
-                        const quantity = parseInt(quantityInput.value) || 0;
-                        if (quantity > 0) {
-                            const individualQuantity = (quantity / sellers).toFixed(0);
-                            items.push(`🎯 *${itemLabel}:* ${quantity} unidades (👤 ${individualQuantity} por vendedor)`);
-                        }
-                    }
-                });
+🧾 *Cupons Totais (Estimados):* ${cuponsTotais}
+👤 *Cupons Individuais (Estimados):* ${cuponsIndividuais} cupons por vendedor`;
 
-                for (let i = 1; i <= 3; i++) {
-                    const otherText = document.getElementById(`otherText${i}`).value.trim();
-                    const quantity = parseInt(document.getElementById(`quantityOther${i}`).value) || 0;
-                    if (otherText && quantity > 0) {
-                        const individualQuantity = (quantity / sellers).toFixed(0);
-                        items.push(`🎯 *${otherText}:* ${quantity} unidades (👤 ${individualQuantity} por vendedor)`);
-                    }
-                }
+      if (adicionais.length > 0) {
+        texto += `\n\n📋 *Itens adicionais:*\n${adicionais.join('\n')}`;
+      }
 
-                if (items.length > 0) {
-                    result += items.join('\n');
-                }
+      document.getElementById('resultado-detalhes').textContent = texto;
+      mensagem.textContent = '✅ Texto gerado com sucesso!';
+    });
 
-                document.getElementById('result').value = result;
-            }
-
-
-        function copyToClipboard() {
-            const resultText = document.getElementById('result');
-            resultText.select();
-            document.execCommand('copy');
-            alert('Texto copiado!');
-        }
-    </script>
+    document.getElementById('copiar-texto').addEventListener('click', () => {
+      const texto = document.getElementById('resultado-detalhes').textContent;
+      navigator.clipboard.writeText(texto);
+      document.getElementById('mensagem').textContent = '📋 Texto copiado para a área de transferência!';
+    });
+  </script>
 </body>
-
 </html>
