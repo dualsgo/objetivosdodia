@@ -11,6 +11,7 @@
       margin: 0;
       padding: 0;
       background-color: #FFD700; /* Fundo amarelo */
+      color: #333; /* Texto preto */
     }
 
     header {
@@ -19,6 +20,7 @@
       color: white;
       padding: 20px;
       border-bottom: 5px solid #FF4500;
+
     }
 
     header h1 {
@@ -56,6 +58,7 @@
     .metricas-grid div, .itens-grid .item {
       display: flex;
       flex-direction: column;
+
     }
 
     .item {
@@ -63,6 +66,7 @@
       grid-template-columns: auto 1fr;
       align-items: center;
       gap: 10px;
+
     }
 
     .item input[type="number"],
@@ -130,12 +134,14 @@
         gap: 15px;
       }
     }
+
+
   </style>
 </head>
 <body>
   <header>
     <h1>🎯 Gerador de Texto - Objetivos do Dia 🎯</h1>
-    <p>📊 Meta e meta prateleira dizem respeito aos dados do painel de metas. O sistema fará o cálculo.</p>
+    <p>📊 Utilize os dados do <a href="https://app.powerbi.com/groups/me/apps/763a2346-9816-4ab6-8f26-75b551342d03/reports/e5d9f2d1-3f04-4f57-bf24-072d7d6c3f49/ReportSection75aae88d0f4691aad25f?experience=power-bi" target="_blank">Painel de metas</a>.</p>
   </header>
   <div class="container">
     <!-- Métricas -->
@@ -144,7 +150,7 @@
       <div class="metricas-grid">
         <div>
           <label for="data">📅 Data</label>
-          <input type="text" id="data" readonly />
+          <input type="text" id="data" readonly disabled />
         </div>
         <div>
           <label for="vendedores">👥 Vendedores</label>
@@ -155,7 +161,7 @@
           <input type="text" id="meta" placeholder="Ex.: 15.299,00" />
         </div>
         <div>
-          <label for="meta-prateleira">🛒 Meta com Prateleira</label>
+          <label for="meta-prateleira">🛒 Meta (com Prateleira)</label>
           <input type="text" id="meta-prateleira" placeholder="Ex.: 15.449,00" />
         </div>
         <div>
@@ -181,6 +187,7 @@
           <input type="checkbox" id="sacola-check" />
           <label for="sacola-check">Sacola</label>
           <input type="number" placeholder="Quantidade" disabled />
+
         </div>
         <div class="item">
           <input type="checkbox" id="slp-check" />
