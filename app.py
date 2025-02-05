@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # Habilita CORS
+CORS(app)  # Habilita CORS para aceitar requisições do frontend
 
 @app.route("/", methods=["GET"])
 def home():
