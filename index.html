@@ -1,302 +1,49 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gerador de Texto - Objetivos do Dia</title>
-  <style>
-    /* Estilo global */
-    body {
-      font-family: 'Lilita One', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #FFD700; /* Fundo amarelo */
-      color: #333; /* Texto preto */
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Metas</title>
+    <script>
+        async function calcularMetas() {
+            const data = {
+                meta_loja: document.getElementById('meta_loja').value,
+                meta_pickup: document.getElementById('meta_pickup').value,
+                meta_shipfrom: document.getElementById('meta_shipfrom').value,
+                num_vendedores: document.getElementById('num_vendedores').value,
+                meta_tkm: document.getElementById('meta_tkm').value,
+                meta_pa: document.getElementById('meta_pa').value,
+                meta_pilhas: document.getElementById('meta_pilhas').value,
+                meta_sacolas: document.getElementById('meta_sacolas').value,
+                meta_baralhos: document.getElementById('meta_baralhos').value,
+                nome_opcional: document.getElementById('nome_opcional').value,
+                meta_opcional: document.getElementById('meta_opcional').value
+            };
 
-    header {
-      text-align: center;
-      background-color: #FF6347;
-      color: white;
-      padding: 20px;
-      border-bottom: 5px solid #FF4500;
+            const response = await fetch('http://127.0.0.1:5000/calcular_metas', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
 
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 2rem;
-    }
-
-    header p {
-      margin: 10px 0 0;
-      font-size: 1rem;
-    }
-
-    .container {
-      display: grid;
-      grid-template-columns: 25% 25% 50%;
-      gap: 20px;
-      padding: 20px;
-      max-width: 1200px;
-      margin: auto;
-    }
-
-    /* Estilo dos grids */
-    .metricas, .itens-adicionais, .resultado {
-      background-color: #FFFACD;
-      padding: 20px;
-      border-radius: 15px;
-      border: 2px solid #FFD700;
-    }
-
-    .metricas-grid, .itens-grid {
-      display: grid;
-      gap: 15px;
-    }
-
-    .metricas-grid div, .itens-grid .item {
-      display: flex;
-      flex-direction: column;
-
-    }
-
-    .item {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      align-items: center;
-      gap: 10px;
-
-    }
-
-    .item input[type="number"],
-    #outro-nome {
-      grid-column: 1 / 3;
-      margin-top: 10px;
-    }
-
-    label {
-      margin-bottom: 5px;
-    }
-
-    input {
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    input::placeholder {
-      font-size: 0.9em;
-    }
-
-    /* Botões */
-    .botoes {
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    button {
-      margin: 10px;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      background-color: #FF6347;
-      color: white;
-      font-size: 1rem;
-    }
-
-    button:hover {
-      background-color: #FF4500;
-    }
-
-    /* Resultado */
-    #resultado-detalhes {
-      margin-top: 20px;
-      background-color: #fff;
-      padding: 10px;
-      border-radius: 5px;
-      white-space: pre-line;
-      font-size: 1rem;
-    }
-
-    #mensagem {
-      margin-top: 10px;
-      color: #FF4500;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    /* Responsividade */
-    @media screen and (max-width: 768px) {
-      .container {
-        grid-template-columns: 1fr;
-        gap: 15px;
-      }
-    }
-
-
-  </style>
+            const result = await response.json();
+            document.getElementById('resultado').innerText = result.mensagem || 'Erro ao calcular';
+        }
+    </script>
 </head>
 <body>
-  <header>
-    <h1>🎯 Gerador de Texto - Objetivos do Dia 🎯</h1>
-    <p>📊 Utilize os dados do <a href="https://app.powerbi.com/groups/me/apps/763a2346-9816-4ab6-8f26-75b551342d03/reports/e5d9f2d1-3f04-4f57-bf24-072d7d6c3f49/ReportSection75aae88d0f4691aad25f?experience=power-bi" target="_blank">Painel de metas</a>.</p>
-  </header>
-  <div class="container">
-    <!-- Métricas -->
-    <div class="metricas">
-      <h2>📈 Métricas</h2>
-      <div class="metricas-grid">
-        <div>
-          <label for="data">📅 Data</label>
-          <input type="text" id="data" readonly disabled />
-        </div>
-        <div>
-          <label for="vendedores">👥 Vendedores</label>
-          <input type="number" id="vendedores" placeholder="Quantidade de vendedores" />
-        </div>
-        <div>
-          <label for="meta">💰 Meta</label>
-          <input type="text" id="meta" placeholder="Ex.: 15.299,00" />
-        </div>
-        <div>
-          <label for="meta-prateleira">🛒 Meta (com Prateleira)</label>
-          <input type="text" id="meta-prateleira" placeholder="Ex.: 15.449,00" />
-        </div>
-        <div>
-          <label for="tkm">💻 TKM</label>
-          <input type="text" id="tkm" placeholder="Ex.: 140,00" />
-        </div>
-        <div>
-          <label for="pa">📊 P.A.</label>
-          <input type="text" id="pa" placeholder="Ex.: 1,65" />
-        </div>
-      </div>
-    </div>
-    <!-- Itens Adicionais -->
-    <div class="itens-adicionais">
-      <h2>📦 Itens Adicionais</h2>
-      <div class="itens-grid">
-        <div class="item">
-          <input type="checkbox" id="baralho-check" />
-          <label for="baralho-check">Baralho</label>
-          <input type="number" placeholder="Quantidade" disabled />
-        </div>
-        <div class="item">
-          <input type="checkbox" id="sacola-check" />
-          <label for="sacola-check">Sacola</label>
-          <input type="number" placeholder="Quantidade" disabled />
-
-        </div>
-        <div class="item">
-          <input type="checkbox" id="slp-check" />
-          <label for="slp-check">SLP</label>
-          <input type="number" placeholder="Quantidade" disabled />
-        </div>
-        <div class="item">
-          <input type="checkbox" id="outro-check" />
-          <label for="outro-check">Outro</label>
-          <input type="text" id="outro-nome" placeholder="Nome do item" disabled />
-          <input type="number" placeholder="Quantidade" disabled />
-        </div>
-      </div>
-    </div>
-    <!-- Resultado -->
-    <div class="resultado">
-      <h2>📜 Resultado</h2>
-      <div class="botoes">
-        <button id="gerar-texto">Gerar Texto</button>
-        <button id="copiar-texto">Copiar Texto</button>
-      </div>
-      <div id="mensagem"></div>
-      <div id="resultado-detalhes"></div>
-    </div>
-  </div>
-  <script>
-    const parseValor = (valor) => parseFloat(valor.replace(/\./g, '').replace(',', '.')) || 0;
-
-    document.getElementById('data').value = new Date().toLocaleDateString('pt-BR', {
-      weekday: 'long',
-      day: '2-digit',
-      month: '2-digit',
-    });
-
-    document.querySelectorAll('.item input[type="checkbox"]').forEach((checkbox) => {
-      checkbox.addEventListener('change', () => {
-        const inputs = checkbox.parentElement.querySelectorAll('input[type="number"], input[type="text"]');
-        inputs.forEach((input) => (input.disabled = !checkbox.checked));
-      });
-    });
-
-    document.getElementById('gerar-texto').addEventListener('click', () => {
-      const vendedores = parseInt(document.getElementById('vendedores').value) || 1;
-      const meta = parseValor(document.getElementById('meta').value);
-      const metaPrateleira = parseValor(document.getElementById('meta-prateleira').value);
-      const tkm = parseValor(document.getElementById('tkm').value);
-      const pa = parseValor(document.getElementById('pa').value);
-
-      // Verificações
-      const mensagem = document.getElementById('mensagem');
-      mensagem.textContent = '';
-
-      if (pa > 5 || pa < 1) {
-        mensagem.textContent = '⚠️ P.A. deve estar entre 1 e 5. Use vírgula como separador decimal!';
-        return;
-      }
-
-      if (metaPrateleira < meta) {
-        mensagem.textContent = '⚠️ Meta com prateleira não pode ser menor que a meta da loja. Verifique os valores!';
-        return;
-      }
-
-      // Cálculos
-      const metaPrateleiraDif = metaPrateleira - meta;
-      const metaIndividual = Math.round(meta / vendedores);
-      const metaPrateleiraIndividual = Math.round(metaPrateleiraDif / vendedores);
-      const cuponsTotais = tkm > 0 ? Math.round(meta / tkm) : 0;
-      const cuponsIndividuais = Math.round(cuponsTotais / vendedores);
-
-      // Itens adicionais
-      const adicionais = [];
-      document.querySelectorAll('.item input[type="checkbox"]').forEach((checkbox) => {
-        if (checkbox.checked) {
-          const nome = checkbox.id === 'outro-check' ? document.getElementById('outro-nome').value : checkbox.nextElementSibling.textContent;
-          const quantidade = parseInt(checkbox.parentElement.querySelector('input[type="number"]').value) || 0;
-          const quantidadePorVendedor = Math.round(quantidade / vendedores);
-          adicionais.push(`📦 *${nome}:* ${quantidade} (${quantidadePorVendedor} por vendedor)`);
-        }
-      });
-
-      // Texto gerado
-      let texto = `
-📅 *Objetivos do Dia (${document.getElementById('data').value}):*
-
-🎯 *Meta da Loja:* R$ ${meta.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-👤 *Meta Individual:* R$ ${metaIndividual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-
-🛒 *Meta Prateleira:* R$ ${metaPrateleiraDif.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-🌐 *Meta Prateleira Individual:* R$ ${metaPrateleiraIndividual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-
-💻 *TKM:* R$ ${tkm.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-📊 *P.A.:* ${pa.toFixed(2)}
-
-🧾 *Cupons Totais (Estimados):* ${cuponsTotais}
-👤 *Cupons Individuais (Estimados):* ${cuponsIndividuais} cupons por vendedor`;
-
-      if (adicionais.length > 0) {
-        texto += `\n\n📋 *Itens adicionais:*\n${adicionais.join('\n')}`;
-      }
-
-      document.getElementById('resultado-detalhes').textContent = texto;
-      mensagem.textContent = '✅ Texto gerado com sucesso!';
-    });
-
-    document.getElementById('copiar-texto').addEventListener('click', () => {
-      const texto = document.getElementById('resultado-detalhes').textContent;
-      navigator.clipboard.writeText(texto);
-      document.getElementById('mensagem').textContent = '📋 Texto copiado para a área de transferência!';
-    });
-  </script>
+    <h2>Calculadora de Metas</h2>
+    <label>Meta Loja (R$): <input type="number" id="meta_loja"></label><br>
+    <label>Meta Pick-Up (R$): <input type="number" id="meta_pickup"></label><br>
+    <label>Meta Ship-From (R$): <input type="number" id="meta_shipfrom"></label><br>
+    <label>Número de Vendedores: <input type="number" id="num_vendedores"></label><br>
+    <label>Meta TKM (R$): <input type="number" id="meta_tkm"></label><br>
+    <label>Meta PA: <input type="number" id="meta_pa"></label><br>
+    <label>Meta PILHAS: <input type="number" id="meta_pilhas"></label><br>
+    <label>Meta SACOLAS: <input type="number" id="meta_sacolas"></label><br>
+    <label>Meta BARALHOS: <input type="number" id="meta_baralhos"></label><br>
+    <label>Meta Opcional: <input type="text" id="nome_opcional"> <input type="number" id="meta_opcional"></label><br>
+    <button onclick="calcularMetas()">Calcular</button>
+    <p id="resultado"></p>
 </body>
 </html>
