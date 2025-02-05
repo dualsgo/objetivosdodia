@@ -1,49 +1,80 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Metas</title>
-    <script>
-        async function calcularMetas() {
-            const data = {
-                meta_loja: document.getElementById('meta_loja').value,
-                meta_pickup: document.getElementById('meta_pickup').value,
-                meta_shipfrom: document.getElementById('meta_shipfrom').value,
-                num_vendedores: document.getElementById('num_vendedores').value,
-                meta_tkm: document.getElementById('meta_tkm').value,
-                meta_pa: document.getElementById('meta_pa').value,
-                meta_pilhas: document.getElementById('meta_pilhas').value,
-                meta_sacolas: document.getElementById('meta_sacolas').value,
-                meta_baralhos: document.getElementById('meta_baralhos').value,
-                nome_opcional: document.getElementById('nome_opcional').value,
-                meta_opcional: document.getElementById('meta_opcional').value
-            };
-
-            const response = await fetch('http://127.0.0.1:5000/calcular_metas', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-
-            const result = await response.json();
-            document.getElementById('resultado').innerText = result.mensagem || 'Erro ao calcular';
-        }
-    </script>
+    <title>Metas de Vendas</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 500px; margin: auto; }
+        label { display: block; margin-top: 10px; }
+        input { width: 100%; padding: 8px; margin-top: 5px; }
+        button { margin-top: 15px; padding: 10px; background: #28a745; color: white; border: none; cursor: pointer; }
+        button:hover { background: #218838; }
+        #resultado { margin-top: 20px; white-space: pre-line; font-weight: bold; }
+    </style>
 </head>
 <body>
-    <h2>Calculadora de Metas</h2>
-    <label>Meta Loja (R$): <input type="number" id="meta_loja"></label><br>
-    <label>Meta Pick-Up (R$): <input type="number" id="meta_pickup"></label><br>
-    <label>Meta Ship-From (R$): <input type="number" id="meta_shipfrom"></label><br>
-    <label>Número de Vendedores: <input type="number" id="num_vendedores"></label><br>
-    <label>Meta TKM (R$): <input type="number" id="meta_tkm"></label><br>
-    <label>Meta PA: <input type="number" id="meta_pa"></label><br>
-    <label>Meta PILHAS: <input type="number" id="meta_pilhas"></label><br>
-    <label>Meta SACOLAS: <input type="number" id="meta_sacolas"></label><br>
-    <label>Meta BARALHOS: <input type="number" id="meta_baralhos"></label><br>
-    <label>Meta Opcional: <input type="text" id="nome_opcional"> <input type="number" id="meta_opcional"></label><br>
-    <button onclick="calcularMetas()">Calcular</button>
-    <p id="resultado"></p>
+
+    <h2>Configuração das Metas</h2>
+    <form id="form-metas">
+        <label>Meta Loja (R$): <input type="number" id="meta_loja" step="0.01" required></label>
+        <label>Meta Pick-Up (R$): <input type="number" id="meta_pickup" step="0.01" required></label>
+        <label>Meta Ship-From (R$): <input type="number" id="meta_shipfrom" step="0.01" required></label>
+        <label>Número de Vendedores: <input type="number" id="num_vendedores" min="1" required></label>
+        <label>Meta TKM (R$): <input type="number" id="meta_tkm" step="0.01" required></label>
+        <label>Meta P.A: <input type="number" id="meta_pa" step="0.01" required></label>
+        <label>Meta PILHAS: <input type="number" id="meta_pilhas" min="1" required></label>
+        <label>Meta SACOLAS: <input type="number" id="meta_sacolas" min="1" required></label>
+        <label>Meta BARALHOS: <input type="number" id="meta_baralhos" min="1" required></label>
+
+        <label><input type="checkbox" id="incluir_opcional"> Incluir Meta Opcional</label>
+        <label>Nome da Meta Opcional: <input type="text" id="nome_opcional" disabled></label>
+        <label>Meta Opcional: <input type="number" id="meta_opcional" min="1" disabled></label>
+
+        <button type="submit">Gerar Metas</button>
+    </form>
+
+    <div id="resultado"></div>
+
+    <script>
+        document.getElementById("incluir_opcional").addEventListener("change", function() {
+            let opcionalAtivo = this.checked;
+            document.getElementById("nome_opcional").disabled = !opcionalAtivo;
+            document.getElementById("meta_opcional").disabled = !opcionalAtivo;
+        });
+
+        document.getElementById("form-metas").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            let formData = {
+                meta_loja: parseFloat(document.getElementById("meta_loja").value),
+                meta_pickup: parseFloat(document.getElementById("meta_pickup").value),
+                meta_shipfrom: parseFloat(document.getElementById("meta_shipfrom").value),
+                num_vendedores: parseInt(document.getElementById("num_vendedores").value),
+                meta_tkm: parseFloat(document.getElementById("meta_tkm").value),
+                meta_pa: parseFloat(document.getElementById("meta_pa").value),
+                meta_pilhas: parseInt(document.getElementById("meta_pilhas").value),
+                meta_sacolas: parseInt(document.getElementById("meta_sacolas").value),
+                meta_baralhos: parseInt(document.getElementById("meta_baralhos").value),
+                incluir_opcional: document.getElementById("incluir_opcional").checked,
+                nome_opcional: document.getElementById("nome_opcional").value,
+                meta_opcional: document.getElementById("incluir_opcional").checked ? parseInt(document.getElementById("meta_opcional").value) : 0
+            };
+
+            try {
+                const response = await fetch("https://objetivosdodia.onrender.com", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                document.getElementById("resultado").innerText = data.mensagem;
+            } catch (error) {
+                document.getElementById("resultado").innerText = "Erro ao conectar com a API.";
+            }
+        });
+    </script>
+
 </body>
 </html>
