@@ -212,7 +212,9 @@
   <script>
     const parseValor = (valor) => parseFloat(valor.replace(/\./g, '').replace(',', '.')) || 0;
 
-    document.getElementById('data').value = new Date().toLocaleDateString('pt-BR', {
+    const amanha = new Date();
+    amanha.setDate(amanha.getDate() + 1);
+    document.getElementById('data').value = amanha.toLocaleDateString('pt-BR', {
       weekday: 'long',
       day: '2-digit',
       month: '2-digit',
