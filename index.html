@@ -157,12 +157,8 @@
           <input type="number" id="vendedores" placeholder="Quantidade de vendedores" />
         </div>
         <div>
-          <label for="meta">💰 Meta</label>
-          <input type="text" id="meta" placeholder="Ex.: 15.299,00" />
-        </div>
-        <div>
-          <label for="meta-prateleira">🛒 Meta (com Prateleira)</label>
-          <input type="text" id="meta-prateleira" placeholder="Ex.: 15.449,00" />
+          <label for="meta-omni">💰 Meta com OMNI</label>
+          <input type="text" id="meta-omni" placeholder="Ex.: 15.449,00" />
         </div>
         <div>
           <label for="tkm">💻 TKM</label>
@@ -231,8 +227,7 @@
 
     document.getElementById('gerar-texto').addEventListener('click', () => {
       const vendedores = parseInt(document.getElementById('vendedores').value) || 1;
-      const meta = parseValor(document.getElementById('meta').value);
-      const metaPrateleira = parseValor(document.getElementById('meta-prateleira').value);
+      const metaOmni = parseValor(document.getElementById('meta-omni').value);
       const tkm = parseValor(document.getElementById('tkm').value);
       const pa = parseValor(document.getElementById('pa').value);
 
@@ -245,16 +240,9 @@
         return;
       }
 
-      if (metaPrateleira < meta) {
-        mensagem.textContent = '⚠️ Meta com prateleira não pode ser menor que a meta da loja. Verifique os valores!';
-        return;
-      }
-
       // Cálculos
-      const metaPrateleiraDif = metaPrateleira - meta;
-      const metaIndividual = Math.round(meta / vendedores);
-      const metaPrateleiraIndividual = Math.round(metaPrateleiraDif / vendedores);
-      const cuponsTotais = tkm > 0 ? Math.round(meta / tkm) : 0;
+      const metaIndividual = Math.round(metaOmni / vendedores);
+      const cuponsTotais = tkm > 0 ? Math.round(metaOmni / tkm) : 0;
       const cuponsIndividuais = Math.round(cuponsTotais / vendedores);
 
       // Itens adicionais
@@ -272,11 +260,8 @@
       let texto = `
 📅 *Objetivos do Dia (${document.getElementById('data').value}):*
 
-🎯 *Meta da Loja:* R$ ${meta.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+🎯 *Meta com OMNI:* R$ ${metaOmni.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
 👤 *Meta Individual:* R$ ${metaIndividual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-
-🛒 *Meta Prateleira:* R$ ${metaPrateleiraDif.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-🌐 *Meta Prateleira Individual:* R$ ${metaPrateleiraIndividual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
 
 💻 *TKM:* R$ ${tkm.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
 📊 *P.A.:* ${pa.toFixed(2)}
